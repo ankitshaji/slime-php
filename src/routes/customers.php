@@ -6,7 +6,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 
 $app = new \Slim\App;
 
-//Get All Customers
+//Server Accepts Get Requests
 $app->get('/api/customers', function (Request $request, Response $response) {
     echo 'CUSTOMERS';
     

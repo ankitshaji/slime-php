@@ -1,4 +1,6 @@
 <?php 
+//Creating and Connecting to DB
+
 class db{
     //Properties
     private $dbhost = 'localhost';
