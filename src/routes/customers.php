@@ -1,12 +1,13 @@
 <?php
 //Server 
+//Slim Framework
 
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Psr\Http\Message\ServerRequestInterface as Request;
 
 $app = new \Slim\App;
 
-//Server Accepts Get Requests - ALL customers
+//Server Accepts GET Requests - ALL customers
 $app->get('/api/customers', function (Request $request, Response $response) {
     //query
     $query = "SELECT * FROM customers";
@@ -15,19 +16,20 @@ $app->get('/api/customers', function (Request $request, Response $response) {
         $db = new db();
         //Connect
         $db = $db->connect();
+
+        //create statement
+        $stmt = $db->query($query);
+        //Get Request to database
+        $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+        //return json
+        echo json_encode($customers);
     } catch (PDOException $e) {
         echo '{"error":' . $e->getMessage() . '}';
     }
-    //create statement
-    $stmt = $db->query($query);
-    //Get Request to database
-    $customers = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    //return json
-    echo json_encode($customers);
 });
 
-//Server Accepts Get Requests - One customer
+//Server Accepts GET Requests - One customer
 $app->get('/api/customer/{id}', function (Request $request, Response $response) {
     //get id from url - getAttribute()
     $id = $request->getAttribute('id');
@@ -39,16 +41,17 @@ $app->get('/api/customer/{id}', function (Request $request, Response $response) 
         $db = new db();
         //Connect
         $db = $db->connect();
+
+        //create statement
+        $stmt = $db->query($query);
+        //Get Request to database
+        $customer = $stmt->fetchAll(PDO::FETCH_OBJ);
+        $db = null;
+        //return json
+        echo json_encode($customer);
     } catch (PDOException $e) {
         echo '{"error":' . $e->getMessage() . '}';
     }
-    //create statement
-    $stmt = $db->query($query);
-    //Get Request to database
-    $customer = $stmt->fetchAll(PDO::FETCH_OBJ);
-    $db = null;
-    //return json
-    echo json_encode($customer);
 });
 
 //Server Accepts POST Requests - Create customer
@@ -136,6 +139,31 @@ $app->put('/api/customer/update/{id}', function (Request $request, Response $res
         $stmt->execute();
 
         echo '{"message":"Customer updated"}';
+    } catch (PDOException $e) {
+        echo '{"error":' . $e->getMessage() . '}';
+    }
+});
+
+
+//Server Accepts DELETE Requests - One customer
+$app->delete('/api/customer/delete/{id}', function (Request $request, Response $response) {
+    //get id from url - getAttribute()
+    $id = $request->getAttribute('id');
+    //query
+    $query = "DELETE FROM customers 
+    WHERE id = $id";
+    try {
+        //Get DB Object
+        $db = new db();
+        //Connect
+        $db = $db->connect();
+
+        //create statement
+        $stmt = $db->prepare($query);
+        $stmt->execute();
+
+        echo '{"message":"Customer deleted"}';
+        $db = null;
     } catch (PDOException $e) {
         echo '{"error":' . $e->getMessage() . '}';
     }
