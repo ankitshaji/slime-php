@@ -1,0 +1,21 @@
+//update to run directly as http://slim_php/hello/name 
+//instead of localhost
+//xampp -> apache -> conf -> extra -> httpd-vhost.conf 
+
+NameVirtualHost *:80
+
+<VirtualHost *:80>
+DocumentRoot "C:/xampp/htdpcs"
+ServerName localhost
+</VirtualHost>
+
+<VirtualHost *:80>
+DocumentRoot "C:/xampp/htdocs/dev/slim_php/public"
+ServerName slim_php
+</VirtualHost>
+
+//update host file -open txt as admin
+//C -> Windows ->System32 ->drivers ->etc ->hosts
+
+127.0.0.1 slim_php
+
