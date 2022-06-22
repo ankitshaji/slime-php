@@ -29,7 +29,7 @@ $app->get('/api/customers', function (Request $request, Response $response) {
 
 //Server Accepts Get Requests - One customer
 $app->get('/api/customer/{id}', function (Request $request, Response $response) {
-    //getid from url - getAttribute()
+    //get id from url - getAttribute()
     $id = $request->getAttribute('id');
     //query
     $query = "SELECT * FROM customers 
@@ -86,6 +86,56 @@ $app->post('/api/customer/add', function (Request $request, Response $response) 
         $stmt->execute();
 
         echo '{"message":"Customer added"}';
+    } catch (PDOException $e) {
+        echo '{"error":' . $e->getMessage() . '}';
+    }
+});
+
+
+//Server Accepts PUT Requests - Update customer
+$app->put('/api/customer/update/{id}', function (Request $request, Response $response) {
+    //get id from url - getAttribute()
+    $id = $request->getAttribute('id');
+    //form info - retrieved params
+    //get params from url - getParam()
+    $first_name = $request->getParams()['first_name'] ?? '';
+    $last_name =  $request->getParams()['last_name'] ?? '';
+    $phone =  $request->getParams()['phone'] ?? '';
+    $email =  $request->getParams()['email'] ?? '';
+    $address =  $request->getParams()['address'] ?? '';
+    $city =  $request->getParams()['city'] ?? '';
+    $state =  $request->getParams()['state'] ?? '';
+
+    //query
+    $query = "UPDATE customers SET
+    first_name=:first_name,
+    last_name = :last_name,
+    phone = :phone,
+    email = :email,
+    address = :address,
+    city = :city,
+    state = :state
+    where id =$id";
+
+    try {
+        //Get DB Object
+        $db = new db();
+        //Connect
+        $db = $db->connect();
+
+        //bind parameters to placeholders
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':first_name', $first_name);
+        $stmt->bindParam(':last_name', $last_name);
+        $stmt->bindParam(':phone', $phone);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':address', $address);
+        $stmt->bindParam(':city', $city);
+        $stmt->bindParam(':state', $state);
+
+        $stmt->execute();
+
+        echo '{"message":"Customer updated"}';
     } catch (PDOException $e) {
         echo '{"error":' . $e->getMessage() . '}';
     }
